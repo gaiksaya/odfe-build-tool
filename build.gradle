@@ -1,0 +1,50 @@
+//buildscript {
+//    repositories {
+//        mavenCentral()
+//        maven { url "https://plugins.gradle.org/m2/" }
+//        jcenter()
+//    }
+//    dependencies {
+//        classpath "org.elasticsearch.gradle:buildSrc:8.0.0-SNAPSHOT"
+//    }
+//}
+plugins {
+    id 'groovy'
+    id 'java-gradle-plugin'
+    id 'maven-publish'
+    id 'java'
+}
+
+group 'com.amazon'
+version '1.0'
+
+repositories {
+    mavenCentral()
+    maven { url "https://plugins.gradle.org/m2/" }
+}
+
+dependencies {
+//    compile 'org.codehaus.groovy:groovy-all:2.3.11'
+//    testCompile group: 'junit', name: 'junit', version: '4.12'
+    implementation gradleApi()
+    api 'com.github.jengelman.gradle.plugins:shadow:5.1.0'
+    compile "org.elasticsearch.gradle:build-tools:7.8.0"
+}
+//what my plugin will be called
+gradlePlugin {
+    plugins {
+        simplePlugin {
+            id = 'com.amazon.odfe'
+            implementationClass = 'com.opendistroforelasticsearch.buildtool.BuildPlugin'
+        }
+    }
+}
+
+publishing {
+    repositories {
+        maven {
+            url = "$buildDir/repo"
+        }
+    }
+
+}
