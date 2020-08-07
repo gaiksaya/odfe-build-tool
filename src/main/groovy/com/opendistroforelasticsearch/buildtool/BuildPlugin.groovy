@@ -1,6 +1,5 @@
 package com.opendistroforelasticsearch.buildtool
 
-import org.elasticsearch.gradle.DependenciesInfoPlugin
 import org.elasticsearch.gradle.dependencies.CompileOnlyResolvePlugin
 import org.elasticsearch.gradle.info.BuildParams
 import org.elasticsearch.gradle.precommit.CheckstylePrecommitPlugin
@@ -130,7 +129,7 @@ class BuildPlugin implements Plugin<Project> {
     /** Adds an integTest task which runs rest tests */
     private static void createIntegTestTask(Project project) {
         RestIntegTestTask integTest = project.tasks.create('integTest', RestIntegTestTask.class)
-//        integTest.mustRunAfter('precommit', 'test')
+        integTest.mustRunAfter('precommit', 'test')
         project.check.dependsOn(integTest)
     }
 
@@ -176,6 +175,7 @@ class BuildPlugin implements Plugin<Project> {
              * that shadow jar.
              */
             from { project.plugins.hasPlugin(ShadowPlugin) ? project.shadowJar : project.jar }
+            from project.configurations.runtimeClasspath - project.configurations.compileOnly
             // extra files for the plugin to go into the zip
             from('src/main/packaging') // TODO: move all config/bin/_size/etc into packaging
             from('src/main') {

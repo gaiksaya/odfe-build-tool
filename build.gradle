@@ -25,7 +25,7 @@ dependencies {
 gradlePlugin {
     plugins {
         simplePlugin {
-            id = 'com.amazon.odfe'
+            id = 'odfeBuildTool'
             implementationClass = 'com.opendistroforelasticsearch.buildtool.BuildPlugin'
         }
     }
