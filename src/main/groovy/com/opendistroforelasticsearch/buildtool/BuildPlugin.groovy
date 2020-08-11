@@ -1,13 +1,14 @@
 package com.opendistroforelasticsearch.buildtool
 
+
 import org.elasticsearch.gradle.dependencies.CompileOnlyResolvePlugin
 import org.elasticsearch.gradle.info.BuildParams
 import org.elasticsearch.gradle.precommit.CheckstylePrecommitPlugin
-import org.elasticsearch.gradle.test.rest.RestResourcesPlugin
 import org.gradle.api.InvalidUserDataException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.plugins.ExtraPropertiesExtension
 import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.TaskProvider
@@ -27,10 +28,10 @@ class BuildPlugin implements Plugin<Project> {
         project.pluginManager.apply('elasticsearch.java')
         project.pluginManager.apply(CheckstylePrecommitPlugin)
         project.pluginManager.apply(CompileOnlyResolvePlugin.class)
-        project.pluginManager.apply(RestResourcesPlugin)
 
 
         PluginPropertiesExtension extension = project.extensions.create( 'buildtoolprop', PluginPropertiesExtension, project)
+        project.extensions.getByType(ExtraPropertiesExtension).set('versions', OdfeVersionProperties.odfe_versions)
 
         createIntegTestTask(project)
         createBundleTasks(project, extension)
@@ -47,7 +48,7 @@ class BuildPlugin implements Plugin<Project> {
         }
 
         project.afterEvaluate {
-            project.extensions.getByType(com.opendistroforelasticsearch.buildtool.PluginPropertiesExtension).extendedPlugins.each { pluginName ->
+            project.extensions.getByType(PluginPropertiesExtension).extendedPlugins.each { pluginName ->
                 // Auto add dependent modules to the test cluster
                 if (project.findProject(":modules:${pluginName}") != null) {
                     project.integTest.dependsOn(project.project(":modules:${pluginName}").tasks.bundlePlugin)
@@ -77,7 +78,7 @@ class BuildPlugin implements Plugin<Project> {
                     'name'                : extension1.name,
                     'description'         : extension1.description,
                     'version'             : extension1.version,
-                    'elasticsearchVersion': '7.8.0',
+                    'elasticsearchVersion': OdfeVersionProperties.odfe_versions.get("elasticsearch"),
                     'javaVersion'         : project.targetCompatibility as String,
                     'classname'           : extension1.classname,
                     'extendedPlugins'     : extension1.extendedPlugins.join(','),
@@ -90,6 +91,7 @@ class BuildPlugin implements Plugin<Project> {
             }
         }
         //disable integTest task if project has been converted to use yaml or java rest test plugin
+        // added as precaution
         project.pluginManager.withPlugin("elasticsearch.yaml-rest-test") {
             project.tasks.integTest.enabled = false
         }
