@@ -41,6 +41,7 @@ class BuildPlugin implements Plugin<Project> {
         }
         boolean isXPackModule = project.path.startsWith(':x-pack:plugin')
         boolean isModule = project.path.startsWith(':modules:') || isXPackModule
+
         if (isModule) {
             project.testClusters.integTest.module(project.tasks.bundlePlugin.archiveFile)
         } else {
@@ -57,6 +58,7 @@ class BuildPlugin implements Plugin<Project> {
                     )
                 }
             }
+
             PluginPropertiesExtension extension1 = project.getExtensions().getByType(PluginPropertiesExtension.class)
             String name = extension1.name
             project.archivesBaseName = name
@@ -103,7 +105,7 @@ class BuildPlugin implements Plugin<Project> {
                 .extendsFrom(project.configurations.getByName('runtimeClasspath'))
         // allow running ES with this plugin in the foreground of a build
         project.tasks.register('run', RunTask) {
-            group = 'ODFE building tool'
+            group = 'Build tool'
             dependsOn(project.tasks.bundlePlugin)
             useCluster project.testClusters.integTest
         }
@@ -115,16 +117,16 @@ class BuildPlugin implements Plugin<Project> {
                 compileOnly project.project(':server')
                 testImplementation project.project(':test:framework')
             } else {
-                compileOnly "org.elasticsearch:elasticsearch:7.8.0"
-                testImplementation "org.elasticsearch.test:framework:7.8.0"
+                compileOnly "org.elasticsearch:elasticsearch:${project.versions.elasticsearch}"
+                testCompile "org.elasticsearch.test:framework:${project.versions.elasticsearch}"
             }
             // we "upgrade" these optional deps to provided for plugins, since they will run
             // with a full elasticsearch server that includes optional deps
-            compileOnly "org.locationtech.spatial4j:spatial4j:0.7"
-            compileOnly "org.locationtech.jts:jts-core:1.15.0"
-            compileOnly "org.apache.logging.log4j:log4j-api:2.11.1"
-            compileOnly "org.apache.logging.log4j:log4j-core:2.11.1"
-            compileOnly "org.elasticsearch:jna:4.5.1"
+            compileOnly "org.locationtech.spatial4j:spatial4j:${project.versions.spatial4j}"
+            compileOnly "org.locationtech.jts:jts-core:${project.versions.jts}"
+            compileOnly "org.apache.logging.log4j:log4j-api:${project.versions.log4j}"
+            compileOnly "org.apache.logging.log4j:log4j-core:${project.versions.log4j}"
+            compileOnly "org.elasticsearch:jna:${project.versions.jna}"
         }
     }
 
@@ -145,7 +147,7 @@ class BuildPlugin implements Plugin<Project> {
 
         // create tasks to build the properties file for this plugin
         TaskProvider<Task> copyPluginPropertiesTemplate = project.tasks.register('copyPluginPropertiesTemplate') {
-            group = 'ODFE building tool'
+            group = 'Build tool'
             outputs.file(templateFile)
             doLast {
                 InputStream resourceTemplate = BuildPlugin.getResourceAsStream("/${templateFile.name}") //gets the file from resources dir
@@ -155,7 +157,7 @@ class BuildPlugin implements Plugin<Project> {
 
         // Copy the plugin-descriptor file to generated-resources folder
         TaskProvider<Copy> buildProperties = project.tasks.register('pluginProperties', Copy) {
-            group = 'ODFE building tool'
+            group = 'Build tool'
             dependsOn(copyPluginPropertiesTemplate)
             from(templateFile)
             into("${project.buildDir}/generated-resources")
@@ -169,7 +171,7 @@ class BuildPlugin implements Plugin<Project> {
 
         // create the actual bundle task, which zips up all the files for the plugin
         TaskProvider<Zip> bundle = project.tasks.register('bundlePlugin', Zip) {
-            group = 'ODFE building tool'
+            group = 'Build tool'
             from buildProperties
             from pluginMetadata // metadata (eg custom security policy)
             /*

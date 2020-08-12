@@ -22,6 +22,7 @@ dependencies {
     compile "org.elasticsearch.gradle:build-tools:7.8.0"
 }
 //what my plugin will be called
+// Inorder to use this plugin functionalities, remember to apply plugin first eg: for getting odfe version
 gradlePlugin {
     plugins {
         simplePlugin {

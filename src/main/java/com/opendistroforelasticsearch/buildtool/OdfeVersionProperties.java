@@ -18,6 +18,8 @@ public class OdfeVersionProperties {
     static {
         odfe_versions = VersionProperties.getVersions(); //getting all ES versions from their version.properties
         Properties odprops = getOdfeVersionProperties();
+
+        //GetSet properties from odfe-version.properties
         opendistroVersion = odprops.getProperty("opendistroVersion");
 
         for (String property : odprops.stringPropertyNames()) { //get all keys from properties
