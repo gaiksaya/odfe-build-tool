@@ -1,4 +1,4 @@
-package com.opendistroforelasticsearch.buildtool
+package com.opendistroforelasticsearch
 
 
 import org.elasticsearch.gradle.dependencies.CompileOnlyResolvePlugin
