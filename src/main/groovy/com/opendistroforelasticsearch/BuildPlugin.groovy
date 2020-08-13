@@ -27,7 +27,6 @@ class BuildPlugin implements Plugin<Project> {
         project.pluginManager.apply(TestClustersPlugin)
         project.pluginManager.apply('elasticsearch.java')
         project.pluginManager.apply(CheckstylePrecommitPlugin)
-        project.pluginManager.apply(CompileOnlyResolvePlugin.class)
 
         //extensions to be used by users in their build.gradle
         PluginPropertiesExtension extension = project.extensions.create( 'buildtoolprop', PluginPropertiesExtension, project)
