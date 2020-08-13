@@ -30,11 +30,9 @@ gradlePlugin {
     }
 }
 
+//publishing the jar locally
 publishing {
     repositories {
-        maven {
-            url = "$buildDir/repo"
-        }
+        maven { url = "$buildDir/repo" }
     }
-
 }

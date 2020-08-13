@@ -29,16 +29,19 @@ class BuildPlugin implements Plugin<Project> {
         project.pluginManager.apply(CheckstylePrecommitPlugin)
         project.pluginManager.apply(CompileOnlyResolvePlugin.class)
 
-
+        //extensions to be used by users in their build.gradle
         PluginPropertiesExtension extension = project.extensions.create( 'buildtoolprop', PluginPropertiesExtension, project)
         project.extensions.getByType(ExtraPropertiesExtension).set('versions', OdfeVersionProperties.odfe_versions)
 
         createIntegTestTask(project)
         createBundleTasks(project, extension)
         configureDependencies(project)
+
+
         project.tasks.named("integTest").configure {
             it.dependsOn(project.tasks.named("bundlePlugin"))
         }
+
         boolean isXPackModule = project.path.startsWith(':x-pack:plugin')
         boolean isModule = project.path.startsWith(':modules:') || isXPackModule
 
