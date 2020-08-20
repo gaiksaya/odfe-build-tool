@@ -1,7 +1,6 @@
 package com.opendistroforelasticsearch
 
 
-import org.elasticsearch.gradle.dependencies.CompileOnlyResolvePlugin
 import org.elasticsearch.gradle.info.BuildParams
 import org.elasticsearch.gradle.precommit.CheckstylePrecommitPlugin
 import org.gradle.api.InvalidUserDataException
@@ -29,17 +28,13 @@ class BuildPlugin implements Plugin<Project> {
         project.pluginManager.apply(CheckstylePrecommitPlugin)
 
         //extensions to be used by users in their build.gradle
-        PluginPropertiesExtension extension = project.extensions.create( 'buildtoolprop', PluginPropertiesExtension, project)
+        PluginPropertiesExtension extension = project.extensions.create( 'odfeplugin', PluginPropertiesExtension, project)
         project.extensions.getByType(ExtraPropertiesExtension).set('versions', OdfeVersionProperties.odfe_versions)
 
         createIntegTestTask(project)
         createBundleTasks(project, extension)
         configureDependencies(project)
-
-
-        project.tasks.named("integTest").configure {
-            it.dependsOn(project.tasks.named("bundlePlugin"))
-        }
+        project.tasks.integTest.dependsOn(project.tasks.bundlePlugin)
 
         boolean isXPackModule = project.path.startsWith(':x-pack:plugin')
         boolean isModule = project.path.startsWith(':modules:') || isXPackModule
@@ -69,13 +64,13 @@ class BuildPlugin implements Plugin<Project> {
 
 
             if (extension1.name == null) {
-                throw new InvalidUserDataException('name is a required setting for buildtoolprop')
+                throw new InvalidUserDataException('name is a required setting for odfeplugin')
             }
             if (extension1.description == null) {
-                throw new InvalidUserDataException('description is a required setting for buildtoolprop')
+                throw new InvalidUserDataException('description is a required setting for odfeplugin')
             }
             if (extension1.classname == null) {
-                throw new InvalidUserDataException('classname is a required setting for buildtoolprop')
+                throw new InvalidUserDataException('classname is a required setting for odfeplugin')
             }
 
             Map<String, String> properties = [
@@ -194,7 +189,8 @@ class BuildPlugin implements Plugin<Project> {
         }
 
         // also make the zip available as a configuration (used when depending on this project)
-        project.configurations.create('zip')
-        project.artifacts.add('zip', bundle)
+        // Not needed for ODFE
+//        project.configurations.create('zip')
+//        project.artifacts.add('zip', bundle)
     }
 }

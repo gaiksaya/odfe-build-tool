@@ -1,4 +1,8 @@
-
+buildscript {
+    ext {
+        es_version = '7.9.0'
+    }
+}
 plugins {
     id 'groovy'
     id 'java-gradle-plugin'
@@ -6,8 +10,15 @@ plugins {
     id 'java'
 }
 
+
+//get version from odfe-version.properties file
+Properties props = new Properties()
+InputStream is = new FileInputStream(project.file('src/main/resources/odfe-version.properties'))
+props.load(is)
+
 group 'com.amazon'
-version '1.0'
+version = props.getProperty("opendistroforelasticsearch")
+
 
 repositories {
     mavenCentral()
@@ -17,7 +28,7 @@ repositories {
 dependencies {
     implementation gradleApi()
     api 'com.github.jengelman.gradle.plugins:shadow:5.1.0'
-    compile "org.elasticsearch.gradle:build-tools:7.8.0"
+    compile "org.elasticsearch.gradle:build-tools:${es_version}"
 }
 //what my plugin will be called
 // Inorder to use this plugin functionalities, remember to apply plugin first eg: for getting odfe version

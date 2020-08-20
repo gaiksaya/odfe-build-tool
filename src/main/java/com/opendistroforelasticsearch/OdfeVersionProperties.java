@@ -20,7 +20,7 @@ public class OdfeVersionProperties {
         Properties odprops = getOdfeVersionProperties();
 
         //GetSet properties from odfe-version.properties
-        opendistroVersion = odprops.getProperty("opendistroVersion");
+        opendistroVersion = odprops.getProperty("opendistroforelasticsearch");
 
         for (String property : odprops.stringPropertyNames()) { //get all keys from properties
             odfe_versions.put(property, odprops.getProperty(property)); //put or add everything to dictionary
