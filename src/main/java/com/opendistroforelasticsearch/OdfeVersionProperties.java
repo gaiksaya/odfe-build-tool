@@ -13,14 +13,14 @@ import java.util.Properties;
  */
 public class OdfeVersionProperties {
     private static Map<String, String> odfe_versions = new HashMap<String, String>();
-    private static final String opendistroVersion;
+    private static final String opendistroforelasticsearch;
 
     static {
         odfe_versions = VersionProperties.getVersions(); //getting all ES versions from their version.properties
         Properties odprops = getOdfeVersionProperties();
 
         //GetSet properties from odfe-version.properties
-        opendistroVersion = odprops.getProperty("opendistroforelasticsearch");
+        opendistroforelasticsearch = odprops.getProperty("opendistroforelasticsearch");
 
         for (String property : odprops.stringPropertyNames()) { //get all keys from properties
             odfe_versions.put(property, odprops.getProperty(property)); //put or add everything to dictionary
@@ -47,7 +47,7 @@ public class OdfeVersionProperties {
         return odfe_versions;
     }
 
-    public static String getOpendistroVersion() {
-        return opendistroVersion;
+    public static String getOpendistroforelasticsearch() {
+        return opendistroforelasticsearch;
     }
 }
